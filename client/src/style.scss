@@ -249,32 +249,6 @@ $dark: #444;
               flex-direction: column;
             }
           }
-
-          .left {
-            flex: 3;
-            h3,
-            .link {
-              margin: 0.5em 0;
-            }
-            .btn{
-              width:max-content;
-              display: inline-block;
-              margin-top: 2em;
-              padding:10px 20px;
-              border: 1px solid $darkGreen;
-              transition: all 0.2s ease-in-out;
-              &:hover{
-                background-color: $darkGreen;
-                color: $white !important;
-              }
-            }
-            span {
-              font-size: 0.8em;
-              font-weight: 300;
-            }
-            
-          }
-
           .right {
             flex: 2;
             position: relative;
@@ -312,6 +286,34 @@ $dark: #444;
              
             }
           }
+
+          .left {
+            flex: 3;
+           
+            h3,
+            .link {
+              margin: 0.5em 0;
+            }
+            .btn{
+              width:max-content;
+              display: inline-block;
+              margin-top: 2em;
+              padding:10px 20px;
+              border: 1px solid $darkGreen;
+              transition: all 0.2s ease-in-out;
+              &:hover{
+                background-color: $darkGreen;
+                color: $white !important;
+              }
+            }
+            span {
+              font-size: 0.8em;
+              font-weight: 300;
+            }
+            
+          }
+
+       
           
         }
       }
