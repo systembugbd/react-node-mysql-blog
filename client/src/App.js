@@ -34,6 +34,10 @@ const router = createBrowserRouter([
         element: <Write />,
       },
       {
+        path: "/write/:id",
+        element: <Write />,
+      },
+      {
         path: "/post/:id",
         element: <Single />,
       },

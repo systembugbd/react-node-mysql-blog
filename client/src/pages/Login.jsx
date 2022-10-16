@@ -26,9 +26,10 @@ function Login() {
 
     try {
       const res = await login(input);
+
       navigate("/");
 
-      if (res.response.status > 400) {
+      if (res.status > 400) {
         setErr(res.response.data);
         setSuccess("");
       } else {
@@ -36,9 +37,16 @@ function Login() {
         setErr("");
       }
 
-      setSuccess("Login Successfull");
+      setSuccess("Login Successfull, Redirecting you to home page...");
     } catch (error) {
-      setErr(error?.response?.data);
+      if (error.response.status >= 500) {
+        setErr("Cant Login, Please check your network");
+        return;
+      } else if (error.response.status >= 300 && error.response.status <= 500) {
+        setErr(error.response.data);
+        return;
+      }
+      setErr("Cant Login, Check Username and Password");
       setSuccess("");
     }
   };

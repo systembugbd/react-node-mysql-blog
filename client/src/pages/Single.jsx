@@ -1,6 +1,10 @@
-import { Link, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
+
+import moment from "moment";
+import { AuthContext } from "./../context/authContext";
+import Breadcrumb from "./../component/breadcrumb";
 
 function Single() {
   // const posts = [
@@ -60,14 +64,17 @@ function Single() {
   const [post, setPost] = useState({});
   const [posts, setPosts] = useState([]);
   const location = useLocation();
+  const navigate = useNavigate();
+
   const posdId = location.pathname.split("/")[2];
+  const { currentUser } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
         const res = await axios.get(`/posts/${posdId}`);
-        console.log(res.data.post);
-        setPost(res.data.post);
+        // console.log(res.data);
+        setPost(res.data.post[0]);
         setPosts(res.data.relatedPost);
       } catch (error) {
         console.log(error);
@@ -76,62 +83,112 @@ function Single() {
     fetchPost();
   }, [posdId]);
 
+  let splitSearch =
+    location.search && location.search.includes("cat")
+      ? location.search.split("=")[1]
+      : location.search.split("&")[0].split("=")[1];
+
+  const deleteHandler = async (e, postId, userId) => {
+    const deletePost = await axios.delete(`/posts/${postId}`);
+    navigate(`/?author=${currentUser.username}&authorId=${userId}`);
+  };
+
   return (
-    <div className="singlePagePost">
-      <div className="singlePost">
-        <div className="content">
-          <img src={post.img} alt={post.title} className="image" />
+    <>
+      <Breadcrumb
+        posts={posts}
+        splitSearch={splitSearch}
+        search={location.search}
+      />
 
-          <span className="articleInfo">
-            <img src={post.img} alt={post.title} width={30} className="user" />
-            <div className="info">
-              <Link className="link" to={"/post/shaheb"}>
-                {post.author}
-              </Link>{" "}
-              <span>Posted 2 days ago</span>
+      {
+        <div className="singlePagePost">
+          <div className="singlePost">
+            <div className="content">
+              <div>
+                <img src={post.img} alt={post.title} className="image" />
+
+                <span className="articleInfo">
+                  <img
+                    src={post.userImg}
+                    alt={post.username}
+                    width={30}
+                    className="user"
+                  />
+
+                  <div className="info">
+                    <Link
+                      className="link"
+                      to={`/?author=${post.username}&authorId=${post.uid}`}
+                    >
+                      {post.username}
+                    </Link>{" "}
+                    <span>Posted {moment(post.date).fromNow()}</span>
+                  </div>
+
+                  {currentUser?.username === post?.username && (
+                    <span className="editInfo">
+                      <Link to={`/write/${post.id}`} state={post}>
+                        <img
+                          src="https://cdn-icons-png.flaticon.com/512/32/32355.png"
+                          alt="Edit Post"
+                          width={20}
+                        />
+                      </Link>
+                      <img
+                        src=" https://cdn-icons-png.flaticon.com/512/6861/6861362.png"
+                        alt="Delete Post"
+                        width={20}
+                        onClick={(e) =>
+                          deleteHandler(e, Number(posdId), post.uid)
+                        }
+                      />
+                    </span>
+                  )}
+                </span>
+              </div>
+              <h3>{post.title}</h3>
+              <p>{post.desc}</p>
             </div>
-            <span className="editInfo">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/32/32355.png"
-                alt={post.title}
-                width={20}
-              />
-              <img
-                src=" https://cdn-icons-png.flaticon.com/512/6861/6861362.png"
-                alt={post.title}
-                width={20}
-              />
-            </span>
-          </span>
-          <h3>{post.title}</h3>
-          <p>{post.desc}</p>
+          </div>
+          <div className="relatedPost">
+            {posts.length !== 0 ? (
+              <h3>Other post you may like...</h3>
+            ) : (
+              <h3>There is no related post</h3>
+            )}
+            {posts.map((post) => (
+              <div className="content" key={post.id}>
+                <Link
+                  to={`/post/${post.id}/?cat=${post.cat}`}
+                  className="link "
+                >
+                  <img
+                    src={post.img}
+                    alt={post.title}
+                    width={30}
+                    className="image"
+                  />
+                </Link>
+                <Link
+                  to={`/post/${post.id}/?cat=${post.cat}`}
+                  className="link "
+                >
+                  <h3>{post.title}</h3>
+                </Link>
+
+                <Link
+                  to={`/post/${post.id}/?cat=${post.cat}`}
+                  className="link btn"
+                >
+                  Read More
+                </Link>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-      <div className="relatedPost">
-        <h2>Other post you may like...</h2>
-        {posts
-          .filter((post) => post.id != 6)
-          .map((post) => (
-            <div className="content" key={post.id}>
-              <Link to={`/post/${post.id}`} className="link ">
-                <img
-                  src={post.img}
-                  alt={post.title}
-                  width={30}
-                  className="image"
-                />
-              </Link>
-              <Link to={`/post/${post.id}`} className="link ">
-                <h3>{post.title}</h3>
-              </Link>
-
-              <Link to={`/post/${post.id}`} className="link btn">
-                Read More
-              </Link>
-            </div>
-          ))}
-      </div>
-    </div>
+      }
+    </>
   );
 }
 

@@ -10,9 +10,9 @@ import {
 const router = express.Router();
 
 router.get("/", getPostController);
-router.get("/", insertPostController);
+router.post("/", insertPostController);
 router.get("/:id", getSinglePostById);
 router.get("/:id", updatePostController);
-router.get("/:id", deletePostController);
+router.delete("/:id", deletePostController);
 
 export default router;

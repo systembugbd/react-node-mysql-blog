@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
+import Breadcrumb from "./../component/breadcrumb";
 
 function Home() {
   const [posts, setPosts] = useState([]);
@@ -18,6 +19,11 @@ function Home() {
     };
     fetchPosts();
   }, [search]);
+  let splitSearch =
+    search && search.includes("cat")
+      ? search.split("=")[1]
+      : search.split("&")[0].split("=")[1];
+
   // console.log(posts);
   // const postss = [
   //   {
@@ -37,29 +43,35 @@ function Home() {
   // ];
   // console.log(postss);
   return (
-    <div className="home">
-      <div className="posts">
-        {posts.map((post) => (
-          <div className="single" key={post.id}>
-            <div className="right">
-              <img src={post.img} alt={post.title} />
-            </div>
-            <div className="left">
-              <div>
-                <span>Published Date: {moment(post.date).fromNow()}</span>
+    <>
+      <Breadcrumb posts={posts} splitSearch={splitSearch} search={search} />
+      <div className="home">
+        <div className="posts">
+          {posts.map((post) => (
+            <div className="single" key={post.id}>
+              <div className="right">
+                <img src={post.img} alt={post.title} />
               </div>
-              <h3>{post.title}</h3>
-              <p>{post.desc}</p>
-              <div>
-                <Link className="link btn" to={`/post/${post.id}`}>
-                  Read more
-                </Link>
+              <div className="left">
+                <div>
+                  <span>Published Date: {moment(post.date).fromNow()}</span>
+                </div>
+                <h3>{post.title}</h3>
+                <p>{post.desc}</p>
+                <div>
+                  <Link
+                    className="link btn"
+                    to={`/post/${post.id}/?cat=${post.cat}`}
+                  >
+                    Read more
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

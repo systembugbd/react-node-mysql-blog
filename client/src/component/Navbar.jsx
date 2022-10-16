@@ -16,6 +16,8 @@ function Navbar() {
     notify();
   };
 
+  let write = currentUser ? "/write" : "/login";
+
   return (
     <div className="navbar">
       <div className="logo">
@@ -43,10 +45,15 @@ function Navbar() {
           <h6>Food</h6>
         </Link>
         <span>
-          {(currentUser &&
-            currentUser.username.includes("@") &&
-            currentUser.username.split("@")[0]) ||
-            (currentUser && currentUser.username)}
+          <Link
+            className="link"
+            to={`/?author=${currentUser?.username}&authorId=${currentUser?.id}`}
+          >
+            {(currentUser &&
+              currentUser.username.includes("@") &&
+              currentUser.username.split("@")[0]) ||
+              (currentUser && currentUser.username)}
+          </Link>
         </span>
         <span>
           {(currentUser && (
@@ -61,7 +68,7 @@ function Navbar() {
             ))}
         </span>
         <span className="write">
-          <Link className="link" to="/write">
+          <Link className="link" to={write}>
             Write
           </Link>
         </span>

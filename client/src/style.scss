@@ -12,6 +12,22 @@ $dark: #444;
   .container {
     width: 1024px;
     height: 100vh;
+
+    .bredcrumb{
+      display: block;
+      padding: 1em;
+      text-align: center;
+      margin:2em 0;
+      background: $lightGreen;
+      color:$darkGreen;
+      
+      h1{
+        font-size:15px;
+        font-weight: 400;
+      }
+     }
+
+
     @media (max-width:575px) {
       padding: 20px;
   }
@@ -225,6 +241,8 @@ $dark: #444;
     //Home / All Post
     .home {
       margin-top: 3em;
+
+     
       .posts {
         display: flex;
         justify-content: center;
@@ -239,6 +257,7 @@ $dark: #444;
           margin-bottom: 4em;
           flex-direction: row-reverse;
 
+           
           @media (max-width:575px) {
               flex-direction: column;
               gap: 2em;
@@ -326,7 +345,7 @@ $dark: #444;
       justify-content: center;
       align-items: flex-start;
       flex-direction: row;
-      margin-top: 4em;
+      margin-top: 2em;
       gap: 2em;
       .singlePost{
         flex:2;
@@ -470,11 +489,19 @@ $dark: #444;
             padding:10px 0;
           }
           label.file{
-            text-decoration: underline;
+            
             margin: 10px 0;
             &:hover{
               color:$darkGreen;
               cursor: pointer;
+            }
+            .imagename{
+              width: 250px;
+              max-width:250px;
+              white-space:nowrap;
+              overflow:hidden;
+              text-overflow:ellipsis;
+              display: block;
             }
           }
           .btn{
