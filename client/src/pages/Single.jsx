@@ -89,8 +89,15 @@ function Single() {
       : location.search.split("&")[0].split("=")[1];
 
   const deleteHandler = async (e, postId, userId) => {
-    const deletePost = await axios.delete(`/posts/${postId}`);
-    navigate(`/?author=${currentUser.username}&authorId=${userId}`);
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      const deletePost = await axios.delete(`/posts/${postId}`);
+      navigate(`/?author=${currentUser.username}&authorId=${userId}`);
+    }
+  };
+
+  const getText = (html) => {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    return doc.body.textContent;
   };
 
   return (
@@ -106,11 +113,17 @@ function Single() {
           <div className="singlePost">
             <div className="content">
               <div>
-                <img src={post.img} alt={post.title} className="image" />
+                <img
+                  src={`../../upload/${post.img}`}
+                  alt={post.title}
+                  className="image"
+                  height="500px"
+                  style={{ objectFit: "contain" }}
+                />
 
                 <span className="articleInfo">
                   <img
-                    src={post.userImg}
+                    src={`../../user/${post.userImg}`}
                     alt={post.username}
                     width={30}
                     className="user"
@@ -164,10 +177,11 @@ function Single() {
                   className="link "
                 >
                   <img
-                    src={post.img}
+                    src={`../../upload/${post.img}`}
                     alt={post.title}
-                    width={30}
+                    height="300"
                     className="image"
+                    style={{ objectFit: "contain" }}
                   />
                 </Link>
                 <Link

@@ -17,18 +17,19 @@ export const registerController = (req, res) => {
       const shah = bcriptjs.genSaltSync(10);
       const hash = bcriptjs.hashSync(req.body.password, shah);
 
-      const q = "INSERT INTO users (username,password,email,img) VALUES(?)";
+      const q = "INSERT INTO users (username,password,email,userImg) VALUES(?)";
 
       const values = [
         req.body.username,
         hash,
         req.body.email,
-        (req.body.img && req.body.img) || "no image provided",
+        req.body.userImg,
       ];
 
       db.query(q, [values], (err, data) => {
         if (err) return res.json(err.message);
         const { password, ...others } = values;
+
         return res.status(201).json({
           msg: "Registration Successfull",
           userInfo: {

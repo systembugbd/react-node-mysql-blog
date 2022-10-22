@@ -75,10 +75,10 @@ export const getSinglePostById = (req, res) => {
 // };
 
 export const insertPostController = (req, res) => {
-  const { title, desc, img, date, uid, cat } = req.body;
+  const { title, desc, img, date, cat } = req.body;
 
   const token = req.cookies.access_token;
-  console.log(token);
+
   if (!token) {
     return res
       .status(401)
@@ -90,9 +90,11 @@ export const insertPostController = (req, res) => {
 
     const q =
       "INSERT INTO posts (`title`, `desc`, `img`, `date`, `uid`, `cat`) VALUES(?)";
-
-    db.query(q, [title, desc, img, date, uid, cat], (err, data) => {
-      if (err) return res.status(401).json("Can't insert post");
+    // INSERT INTO posts (`title`, `desc`, `img`, `date`, `uid`, `cat`) VALUES(?)
+    //"hello", "sdlfj", "sdlfj","2022-10-12 11:05:12",90,"sdlfj"
+    const values = [title, desc, img, date, userInfo.id, cat];
+    const qu = db.query(q, [values], (err, data) => {
+      if (err) return res.status(401).json(err.message);
 
       return res.status(201).json("Post Successfully added");
     });
@@ -100,7 +102,32 @@ export const insertPostController = (req, res) => {
 };
 
 export const updatePostController = (req, res) => {
-  req.json("Update Posts is working");
+  const { title, desc, img, date, cat } = req.body;
+
+  const token = req.cookies.access_token;
+
+  if (!token) {
+    return res
+      .status(401)
+      .json("You are not loged in user, Please login first");
+  }
+
+  jwt.verify(token, "maryamKey", (err, userInfo) => {
+    if (err) return res.status(401).json("You are not Authenticated");
+    const postId = req.params.id;
+    const q =
+      "UPDATE posts SET (`title`=?, `desc`=?, `img`=?, `cat`=?) WHERE `id`=? AND `uid`=?";
+
+    // INSERT INTO posts (`title`, `desc`, `img`, `date`, `uid`, `cat`) VALUES(?)
+    //"hello", "sdlfj", "sdlfj","2022-10-12 11:05:12",90,"sdlfj"
+    const values = [title, desc, img, cat];
+
+    const qu = db.query(q, [...values, postId, userInfo.id], (err, data) => {
+      if (err) return res.status(401).json(err.message);
+
+      return res.status(201).json("Post updated successfully");
+    });
+  });
 };
 
 /**

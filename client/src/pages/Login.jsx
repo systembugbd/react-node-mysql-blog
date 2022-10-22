@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../context/authContext";
-// import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 // import "react-toastify/dist/ReactToastify.css";
 
 function Login() {
@@ -32,21 +32,27 @@ function Login() {
       if (res.status > 400) {
         setErr(res.response.data);
         setSuccess("");
+        toast(res.response.data);
       } else {
         setSuccess(res.data);
         setErr("");
+        toast(res.data);
       }
 
       setSuccess("Login Successfull, Redirecting you to home page...");
+      toast("Login Successfull, Redirecting you to home page...");
     } catch (error) {
       if (error.response.status >= 500) {
         setErr("Cant Login, Please check your network");
+        toast("Cant Login, Please check your network");
         return;
       } else if (error.response.status >= 300 && error.response.status <= 500) {
         setErr(error.response.data);
+        toast(error.response.data);
         return;
       }
       setErr("Cant Login, Check Username and Password");
+      toast("Cant Login, Check Username and Password");
       setSuccess("");
     }
   };
@@ -54,6 +60,7 @@ function Login() {
   return (
     <div className="auth">
       <div className="loginForm">
+        <ToastContainer />
         <h3>Login</h3>
         <form onSubmit={handleSubmit}>
           <div className="input-group">

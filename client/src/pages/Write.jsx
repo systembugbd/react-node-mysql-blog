@@ -1,17 +1,34 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import axios from "axios";
 import moment from "moment";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { AuthContext } from "./../context/authContext";
+
+import { ToastContainer, toast } from "react-toastify";
 
 function Write() {
   const state = useLocation().state;
 
-  const [title, setTitle] = useState(state?.title || "");
-  const [desc, setDesc] = useState(state?.desc || "");
-  const [file, setFile] = useState(null);
-  const [cat, setCat] = useState(state?.cat || "");
+  const [title, setTitle] = useState(state ? state?.title : "");
+  const [desc, setDesc] = useState(state ? state?.desc : "");
+  const [file, setFile] = useState("");
+  const [cat, setCat] = useState(state ? state?.cat : "");
+  const { currentUser } = useContext(AuthContext);
+
+  const navigate = useNavigate();
+  //using multer in backend
+  const upload = async () => {
+    try {
+      const fromData = new FormData();
+      fromData.append("file", file);
+      const res = await axios.post("/upload", fromData);
+      return res.data;
+    } catch (error) {
+      toast(error.message);
+    }
+  };
 
   //Editor DBounce Handler
   // const editorHandler = (fn, delay) => {
@@ -34,20 +51,32 @@ function Write() {
   const handleUploadImage = () => {};
 
   const handleSubmit = async (e) => {
-    const data = {
-      title,
-      desc,
-      file: Date.now() + "_" + file.name,
-      date: moment("YYYY MM DD HH:MM:SS").fromNow(),
-      cat,
-    };
-    console.log(data);
-    const res = await axios.post("/posts/", data);
-    console.log(res);
+    const imgUrl = await upload();
+    try {
+      const res = state
+        ? await axios.post(`/posts/${state.id}`, {
+            title,
+            desc,
+            img: file ? imgUrl : "",
+            cat,
+          })
+        : await axios.post("/posts/", {
+            title,
+            desc,
+            img: file ? imgUrl : "",
+            date: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+            cat,
+          });
+
+      res && navigate("/");
+    } catch (error) {
+      toast(error.message);
+    }
   };
   return (
     <div className="addarticle">
       <div className="content">
+        <ToastContainer />
         <input
           type="text"
           placeholder="Title"

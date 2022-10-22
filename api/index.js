@@ -4,13 +4,18 @@ import authRouter from "./routes/auth.js";
 import postRouter from "./routes/posts.js";
 import cors from "cors";
 import { createProxyMiddleware } from "http-proxy-middleware";
+import multer from "multer";
 
 const app = express();
 
 app.use(cookieParser());
 
 app.use(express.json());
+
+//middleware used to enable cors
 app.use(cors());
+
+//middleware used to enable cors
 app.use(
   "http://localhost:8800/api/",
   createProxyMiddleware({
@@ -22,6 +27,58 @@ app.use(
     },
   })
 );
+
+/**
+ * multer upload image with disk storage start for Post
+ */
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "../client/public/upload");
+  },
+  filename: function (req, file, cb) {
+    const uniquePreffix = Date.now() + "-" + file.originalname;
+    cb(null, uniquePreffix);
+  },
+});
+
+const upload = multer({ storage });
+
+app.post("/api/upload", upload.single("file"), function (req, res) {
+  const file = req.file;
+  res.status(200).json(file.filename);
+});
+
+/**
+ * multer upload image with disk storage end //
+ */
+
+/**
+ * multer upload image with disk storage start for User Image
+ */
+const storage2 = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "../client/public/user");
+  },
+  filename: function (req, file, cb) {
+    const uniquePreffix = Date.now() + "-" + file.originalname;
+    cb(null, uniquePreffix);
+  },
+});
+
+const uploadUserImg = multer({ storage: storage2 });
+
+app.post(
+  "/api/uploaduserimg",
+  uploadUserImg.single("file"),
+  function (req, res) {
+    const file = req.file;
+    res.status(200).json(file.filename);
+  }
+);
+
+/**
+ * multer upload image with disk storage end //
+ */
 
 app.use("/api/auth", authRouter);
 app.use("/api/posts", postRouter);

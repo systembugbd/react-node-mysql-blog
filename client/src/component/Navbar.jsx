@@ -11,7 +11,6 @@ function Navbar() {
 
   const handleLogout = async () => {
     const res = await logout();
-
     const notify = () => toast(res.data);
     notify();
   };

@@ -24,6 +24,12 @@ function Home() {
       ? search.split("=")[1]
       : search.split("&")[0].split("=")[1];
 
+  //For HTML to redable text
+  const getText = (html) => {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    return doc.body.textContent;
+  };
+
   // console.log(posts);
   // const postss = [
   //   {
@@ -50,14 +56,19 @@ function Home() {
           {posts.map((post) => (
             <div className="single" key={post.id}>
               <div className="right">
-                <img src={post.img} alt={post.title} />
+                <img
+                  src={`../upload/${post.img}`}
+                  height="300px"
+                  style={{ objectFit: "contain" }}
+                  alt={post.title}
+                />
               </div>
               <div className="left">
                 <div>
                   <span>Published Date: {moment(post.date).fromNow()}</span>
                 </div>
                 <h3>{post.title}</h3>
-                <p>{post.desc}</p>
+                <p className="shotDesc">{getText(post.desc)}</p>
                 <div>
                   <Link
                     className="link btn"
