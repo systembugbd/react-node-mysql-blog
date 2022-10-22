@@ -11,6 +11,7 @@ const router = express.Router();
 
 router.get("/", getPostController);
 router.post("/", insertPostController);
+router.post("/:id", updatePostController);
 router.get("/:id", getSinglePostById);
 router.get("/:id", updatePostController);
 router.delete("/:id", deletePostController);

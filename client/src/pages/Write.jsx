@@ -48,31 +48,35 @@ function Write() {
   // };
   // const dbounce = editorHandler(setValueHandler, 500); //get Anynomous handler
 
-  const handleUploadImage = () => {};
-
   const handleSubmit = async (e) => {
+    e.preventDefault();
     const imgUrl = await upload();
+    // console.log("i m uploaded img: ", imgUrl, "i am post img:", state.img);
     try {
       const res = state
         ? await axios.post(`/posts/${state.id}`, {
             title,
             desc,
-            img: file ? imgUrl : "",
+            img: file ? imgUrl : state?.img,
             cat,
           })
         : await axios.post("/posts/", {
             title,
             desc,
-            img: file ? imgUrl : "",
+            img: file && imgUrl,
             date: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
             cat,
           });
-
-      res && navigate("/");
+      if (res.data == "success") {
+        toast("Post Successfully Updated");
+      } else if (res.data == "inserted") {
+        toast("Post Successfully Inserted");
+      }
     } catch (error) {
       toast(error.message);
     }
   };
+
   return (
     <div className="addarticle">
       <div className="content">
@@ -105,6 +109,7 @@ function Write() {
           <input
             type="file"
             id="file"
+            required
             style={{ display: "none" }}
             onChange={(e) => setFile(e.target.files[0])}
           />
@@ -112,7 +117,9 @@ function Write() {
             <span style={{ fontWeight: "normal", textDecoration: "underline" }}>
               Upload Image
             </span>{" "}
-            {file && <span className="imagename">{file.name}</span>}
+            <span className="imagename">
+              {file.name ? file.name : state?.img}
+            </span>
           </label>
 
           <div className="btn">

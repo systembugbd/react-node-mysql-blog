@@ -30,13 +30,15 @@ app.use(
 
 /**
  * multer upload image with disk storage start for Post
+ * For Unique file name
+ * Date.now() + "-" + file.originalname;
  */
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "../client/public/upload");
   },
   filename: function (req, file, cb) {
-    const uniquePreffix = Date.now() + "-" + file.originalname;
+    const uniquePreffix = file.originalname;
     cb(null, uniquePreffix);
   },
 });
@@ -44,7 +46,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 app.post("/api/upload", upload.single("file"), function (req, res) {
-  const file = req.file;
+  const file = req.file ? req.file : "";
   res.status(200).json(file.filename);
 });
 
@@ -60,7 +62,7 @@ const storage2 = multer.diskStorage({
     cb(null, "../client/public/user");
   },
   filename: function (req, file, cb) {
-    const uniquePreffix = Date.now() + "-" + file.originalname;
+    const uniquePreffix = file.originalname;
     cb(null, uniquePreffix);
   },
 });
@@ -71,7 +73,7 @@ app.post(
   "/api/uploaduserimg",
   uploadUserImg.single("file"),
   function (req, res) {
-    const file = req.file;
+    const file = req.file ? req.file : "";
     res.status(200).json(file.filename);
   }
 );

@@ -161,7 +161,7 @@ function Single() {
                 </span>
               </div>
               <h3>{post.title}</h3>
-              <p>{post.desc}</p>
+              <p>{getText(post.desc)}</p>
             </div>
           </div>
           <div className="relatedPost">

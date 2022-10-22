@@ -96,13 +96,13 @@ export const insertPostController = (req, res) => {
     const qu = db.query(q, [values], (err, data) => {
       if (err) return res.status(401).json(err.message);
 
-      return res.status(201).json("Post Successfully added");
+      return res.status(201).json("inserted");
     });
   });
 };
 
 export const updatePostController = (req, res) => {
-  const { title, desc, img, date, cat } = req.body;
+  const { title, desc, img, cat } = req.body;
 
   const token = req.cookies.access_token;
 
@@ -116,16 +116,17 @@ export const updatePostController = (req, res) => {
     if (err) return res.status(401).json("You are not Authenticated");
     const postId = req.params.id;
     const q =
-      "UPDATE posts SET (`title`=?, `desc`=?, `img`=?, `cat`=?) WHERE `id`=? AND `uid`=?";
+      "UPDATE posts SET `title`=?, `desc`=?, `img`=?, `cat`=? WHERE `id`=? AND `uid`=?";
 
     // INSERT INTO posts (`title`, `desc`, `img`, `date`, `uid`, `cat`) VALUES(?)
     //"hello", "sdlfj", "sdlfj","2022-10-12 11:05:12",90,"sdlfj"
+
     const values = [title, desc, img, cat];
 
     const qu = db.query(q, [...values, postId, userInfo.id], (err, data) => {
-      if (err) return res.status(401).json(err.message);
+      if (err) return res.status(500).json(err.message);
 
-      return res.status(201).json("Post updated successfully");
+      return res.status(200).json("success");
     });
   });
 };
